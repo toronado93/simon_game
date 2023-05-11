@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8" />
+    <title>Simon</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link
+      href="https://fonts.googleapis.com/css?family=Press+Start+2P"
+      rel="stylesheet"
+    />
+  </head>
+
+  <body>
+    <h1 id="level-title">Press A Key to Start</h1>
+    <div class="container">
+      <div lass="row">
+        <div type="button" id="green" class="btn green"></div>
+
+        <div type="button" id="red" class="btn red"></div>
+      </div>
+
+      <div class="row">
+        <div type="button" id="yellow" class="btn yellow"></div>
+        <div type="button" id="blue" class="btn blue"></div>
+      </div>
+    </div>
+
+    <script>
+      // My Scripts
+
+      // Colors Array
+
+      // Notes;
+      // Define a GamePattern and UserClickPattern array;
+
+      const colorpalette = ["blue", "green", "red", "yellow"];
+
+      let gamePattern = [];
+      let userClickPattern = [];
+
+      // one boolean variable and level variable needs
+
+      let started = false;
+      let level = 0;
+
+      // DOM GROUP
+
+      const level_title = document.getElementById("level-title");
+      const click_info = document.querySelector(".container");
+
+      // One function controls the current game with boolean variable if bolean false refresh the level title and change bolean variable to true
+      // and trigger to nextsequence function. This function is used for kick-off the game and is triggered by random key.#
+
+      // Game Starter
+      document.addEventListener("keydown", function (event) {
+        Level_Controller();
+      });
+
+      function Level_Controller() {
+        if (!started) {
+          // level_title.textContent = `Level ${level}`;
+
+          Next_Sequence();
+          started = true;
+        }
+
+        // elseye bi seyler eklenmeli
+      }
+
+      click_info.addEventListener("click", (info) => {
+        userClickPattern.push(info.target.id);
+        sound(info.target.id);
+        animation(info.target.id);
+        check_answer(userClickPattern.length - 1);
+      });
+
+      function check_answer(currentlevel) {
+        if (gamePattern[currentlevel] === userClickPattern[currentlevel]) {
+          if (userClickPattern.length === gamePattern.length) {
+            setTimeout(() => {
+              Next_Sequence();
+            }, 1000);
+          }
+        } else {
+          Game_Over();
+          Start_Over();
+        }
+      }
+
+      // intersection function. Gets user click info. and sends UserClickPattern array.
+      //  (User clicks button , button send their id(in this case will be colorname like blue,red,etc))
+      // this main function also takes user choosen color as an argument and send two other function.First one play sound and second one play animation.
+      // And finally sends the data to checkanswer function. Checkanswer will determine gameover or continue. We send userclickpatterns array length-1
+      // This value also controls currrentgame level
+
+      function Next_Sequence() {
+        // I want this code snippet works when user only step into new level
+        // Computer Plays here
+        userClickPattern = [];
+        level++;
+        level_title.textContent = `Level ${level}`;
+
+        let number = Math.floor(Math.random() * 4);
+        gamePattern.push(colorpalette[number]);
+        sound(colorpalette[number]);
+        animation(colorpalette[number]);
+      }
+
+      // checkanswer is function controls is user doing okey or not. If the result is fine, trigers nextsequence function.
+      // if the result is false play game over sound add game-over class and update the text. Game over class will be removed in 200 miliseconds.
+
+      // The function plays sound
+      function sound(color) {
+        const audio = new Audio(`sounds/${color}.mp3`);
+        audio.play();
+      }
+
+      // Function adds pressed class and removed after 100 milisecond
+      function animation(color) {
+        // Take only color and find among elements
+
+        let current_color_box = document.getElementById(color);
+
+        current_color_box.classList.add("pressed");
+        setTimeout(() => {
+          current_color_box.classList.remove("pressed");
+        }, 100);
+      }
+
+      // Game Over
+      function Game_Over() {
+        const overaudio = new Audio("sounds/wrong.mp3");
+        overaudio.play();
+        level_title.textContent = "Game Over, Press Any Key to Restart";
+        document.querySelector("body").classList.add("game-over");
+
+        setTimeout(() => {
+          document.querySelector("body").classList.remove("game-over");
+        }, 200);
+      }
+
+      function Start_Over() {
+        level = 0;
+        gamePattern = [];
+        started = false;
+      }
+
+      // Defind Variables
+
+      // Intersection function , gets customer info updates arrays and send three different function
+
+      // nextsequence is actually levelupper function. Reset the userclicked pattern, increase level , upgrade level text
+      // create random number between 1-4 and send randomchosen color with using color array;
+
+      // The Function makes game material 0 like level , gamepattern , started boolean variable = false
+    </script>
+  </body>
+</html>
